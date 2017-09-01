@@ -1,0 +1,28 @@
+version: '3'
+services:
+  janusgraph:
+    image: zoellner/janusgraph:0.2.0
+    container_name: janusgraph
+    ports:
+      - "8182:8182"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    command: ["./bin/gremlin-server.sh"]
+
+  elasticsearch:
+    image: zoellner/es-no-xpack:latest
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 1s
+      timeout: 30s
+      retries: 30
+    ports:
+      - "9200"
+    volumes:
+      - ./es/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
