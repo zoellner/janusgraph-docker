@@ -6,8 +6,7 @@ services:
     ports:
       - "8182:8182"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      - elasticsearch
     command: ["./bin/gremlin-server.sh"]
 
   elasticsearch:
